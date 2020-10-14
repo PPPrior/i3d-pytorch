@@ -1,7 +1,7 @@
 import torch.nn as nn
 from torchvision.models.utils import load_state_dict_from_url
 
-__all__ = ['ResNet3d', 'resnet3d']
+__all__ = ['resnet3d']
 
 model_urls = {
     'resnet18': 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
@@ -316,7 +316,6 @@ def resnet3d(arch, pretrained2d=False, progress=True, **kwargs):
         'resnet152': (Bottleneck3d, (3, 8, 36, 3))
     }
 
-    block, layers = arch_settings[arch]
     model = ResNet3d(*arch_settings[arch], **kwargs)
     if pretrained2d:
         state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
