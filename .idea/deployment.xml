@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="like@tuzhigang.cn:7040" remoteFilesAllowedToDisappearOnAutoupload="false" showNewOnSourceInSync="false">
+  <component name="PublishConfigData" autoUpload="Always" remoteFilesAllowedToDisappearOnAutoupload="false" showNewOnSourceInSync="false">
     <serverData>
-      <paths name="like@tuzhigang.cn:7028">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="like@tuzhigang.cn:7040">
+      <paths name="like@tuzhigang.cn:7040 password">
         <serverdata>
           <mappings>
             <mapping deploy="/i3d-pytorch" local="$PROJECT_DIR$" web="/" />
