@@ -25,12 +25,13 @@ class VideoRecord(object):
 
 
 class I3DDataSet(data.Dataset):
-    def __init__(self, root_path, list_file, clip_length=64,
+    def __init__(self, root_path, list_file, clip_length=64, frame_size=(320, 240),
                  modality='RGB', image_tmpl='img_{:05d}.jpg',
                  transform=None, random_shift=True, test_mode=False):
         self.root_path = root_path
         self.list_file = list_file
         self.clip_length = clip_length
+        self.frame_size = frame_size
         self.modality = modality
         self.image_tmpl = image_tmpl
         self.transform = transform
@@ -64,7 +65,7 @@ class I3DDataSet(data.Dataset):
                 index = randint(tick + 1) if self.random_shift else int(tick / 2.0)
             else:
                 index = int(tick / 2.0)
-        return index
+        return index + 1
 
     def __getitem__(self, index):
         record = self.video_list[index]

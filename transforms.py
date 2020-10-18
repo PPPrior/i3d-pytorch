@@ -25,7 +25,7 @@ class GroupRandomCrop(object):
         y1 = random.randint(0, h - th)
 
         for img in img_group:
-            assert(img.size[0] == w and img.size[1] == h)
+            assert (img.size[0] == w and img.size[1] == h)
             if w == tw and h == th:
                 out_images.append(img)
             else:
@@ -45,6 +45,7 @@ class GroupCenterCrop(object):
 class GroupRandomHorizontalFlip(object):
     """Randomly horizontally flips the given PIL.Image with a probability of 0.5
     """
+
     def __init__(self, is_flow=False):
         self.is_flow = is_flow
 
@@ -66,8 +67,8 @@ class GroupNormalize(object):
         self.std = std
 
     def __call__(self, tensor):
-        rep_mean = self.mean * (tensor.size()[0]//len(self.mean))
-        rep_std = self.std * (tensor.size()[0]//len(self.std))
+        rep_mean = self.mean * (tensor.size()[0] // len(self.mean))
+        rep_std = self.std * (tensor.size()[0] // len(self.std))
 
         # TODO: make efficient
         for t, m, s in zip(tensor, rep_mean, rep_std):
@@ -86,7 +87,7 @@ class GroupScale(object):
     """
 
     def __init__(self, size, interpolation=Image.BILINEAR):
-        self.worker = torchvision.transforms.Scale(size, interpolation)
+        self.worker = torchvision.transforms.Resize(size, interpolation)
 
     def __call__(self, img_group):
         return [self.worker(img) for img in img_group]
@@ -210,6 +211,7 @@ class GroupRandomSizedCrop(object):
     size: size of the smaller edge
     interpolation: Default: PIL.Image.BILINEAR
     """
+
     def __init__(self, size, interpolation=Image.BILINEAR):
         self.size = size
         self.interpolation = interpolation
@@ -240,7 +242,7 @@ class GroupRandomSizedCrop(object):
             out_group = list()
             for img in img_group:
                 img = img.crop((x1, y1, x1 + w, y1 + h))
-                assert(img.size == (w, h))
+                assert (img.size == (w, h))
                 out_group.append(img.resize((self.size, self.size), self.interpolation))
             return out_group
         else:
@@ -265,24 +267,39 @@ class Stack(object):
                 return np.concatenate(img_group, axis=2)
 
 
+class ToNumpyNDArray(object):
+
+    def __call__(self, img_group):
+        if img_group[0].mode == 'L':
+            return
+        if img_group[0].mode == 'RGB':
+            return np.array([np.array(x) for x in img_group])
+
+
 class ToTorchFormatTensor(object):
-    """ Converts a PIL.Image (RGB) or numpy.ndarray (H x W x C) in the range [0, 255]
-    to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0] """
+    """ Converts a group of PIL.Image (RGB) or numpy.ndarray (T x H x W x C) in the range
+    [0, 255] to a torch.FloatTensor of shape (C x T x H x W) in the range [0.0, 1.0] """
+
     def __init__(self, div=True):
         self.div = div
 
     def __call__(self, pic):
         if isinstance(pic, np.ndarray):
             # handle numpy array
-            img = torch.from_numpy(pic).permute(2, 0, 1).contiguous()
+            # put it from THWC to CTHW format
+            imgs = torch.from_numpy(pic).permute(3, 0, 1, 2).contiguous()
         else:
             # handle PIL Image
-            img = torch.ByteTensor(torch.ByteStorage.from_buffer(pic.tobytes()))
-            img = img.view(pic.size[1], pic.size[0], len(pic.mode))
-            # put it from HWC to CHW format
-            # yikes, this transpose takes 80% of the loading time/CPU
-            img = img.transpose(0, 1).transpose(0, 2).contiguous()
-        return img.float().div(255) if self.div else img.float()
+            imgs = list()
+            for p in pic:
+                img = torch.ByteTensor(torch.ByteStorage.from_buffer(p.tobytes()))
+                img = img.view(p.size[1], p.size[0], len(p.mode))
+                # put it from HWC to CHW format
+                # yikes, this transpose takes 80% of the loading time/CPU
+                img = img.transpose(0, 1).transpose(0, 2).contiguous()
+                imgs.append(img)
+            imgs = torch.stack(imgs, dim=0)
+        return imgs.float().div(255) if self.div else imgs.float()
 
 
 class IdentityTransform(object):

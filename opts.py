@@ -8,17 +8,21 @@ parser.add_argument('train_list', type=str)
 parser.add_argument('val_list', type=str)
 
 # ========================= Model Configs ==========================
-parser.add_argument('--arch', type=str, default="resnet101")
+parser.add_argument('--arch', type=str, default="i3d_resnet50")
 parser.add_argument('--dropout', '--do', default=0.5, type=float,
                     metavar='DO', help='dropout ratio (default: 0.5)')
+parser.add_argument('--clip_length', default=64, type=int, metavar='N',
+                    help='length of sequential frames (default: 64)')
+parser.add_argument('--input_size', default=224, type=int, metavar='N',
+                    help='size of input (default: 224)')
 parser.add_argument('--loss_type', type=str, default="nll",
                     choices=['nll'])
 
 # ========================= Learning Configs ==========================
 parser.add_argument('--epochs', default=60, type=int, metavar='N',
                     help='number of total epochs to run')
-parser.add_argument('-b', '--batch-size', default=32, type=int,
-                    metavar='N', help='mini-batch size (default: 256)')
+parser.add_argument('-b', '--batch-size', default=16, type=int,
+                    metavar='N', help='mini-batch size (default: 16)')
 parser.add_argument('--lr', '--learning-rate', default=0.001, type=float,
                     metavar='LR', help='initial learning rate')
 parser.add_argument('--lr_steps', default=[20, 40], type=float, nargs="+",
