@@ -15,21 +15,16 @@ from transforms import *
 # options
 parser = argparse.ArgumentParser(description="Standard video-level testing")
 parser.add_argument('dataset', type=str, choices=['ucf101', 'hmdb51', 'kinetics'])
-parser.add_argument('modality', type=str, choices=['RGB', 'Flow', 'RGBDiff'])
+parser.add_argument('modality', type=str, choices=['RGB', 'Flow'])
 parser.add_argument('root_path', type=str)
 parser.add_argument('test_list', type=str)
 parser.add_argument('weights', type=str)
 parser.add_argument('--arch', type=str, default='i3d_resnet50')
 parser.add_argument('--save_scores', type=str, default=None)
-parser.add_argument('--test_segments', type=int, default=25)
 parser.add_argument('--max_num', type=int, default=-1)
-parser.add_argument('--test_crops', type=int, default=1)
 parser.add_argument('--input_size', type=int, default=224)
 parser.add_argument('--clip_length', default=64, type=int, metavar='N',
                     help='length of sequential frames (default: 64)')
-parser.add_argument('--crop_fusion_type', type=str, default='avg',
-                    choices=['avg', 'max', 'topk'])
-parser.add_argument('--k', type=int, default=3)
 parser.add_argument('--dropout', type=float, default=0.7)
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
