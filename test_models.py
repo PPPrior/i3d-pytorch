@@ -47,7 +47,7 @@ elif args.dataset == 'kinetics':
 else:
     raise ValueError('Unknown dataset ' + args.dataset)
 
-model = getattr(i3d, args.arch)(pretrained2d=True, num_classes=num_classes,
+model = getattr(i3d, args.arch)(modality=args.modality, num_classes=num_classes,
                                 dropout_ratio=args.dropout)
 
 checkpoint = torch.load(args.weights)
