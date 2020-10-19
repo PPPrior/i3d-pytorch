@@ -13,18 +13,20 @@ from models import i3d
 from transforms import *
 
 # options
-parser = argparse.ArgumentParser(
-    description="Standard video-level testing")
+parser = argparse.ArgumentParser(description="Standard video-level testing")
 parser.add_argument('dataset', type=str, choices=['ucf101', 'hmdb51', 'kinetics'])
 parser.add_argument('modality', type=str, choices=['RGB', 'Flow', 'RGBDiff'])
+parser.add_argument('root_path', type=str)
 parser.add_argument('test_list', type=str)
 parser.add_argument('weights', type=str)
-parser.add_argument('--arch', type=str, default='resnet101')
+parser.add_argument('--arch', type=str, default='i3d_resnet50')
 parser.add_argument('--save_scores', type=str, default=None)
 parser.add_argument('--test_segments', type=int, default=25)
 parser.add_argument('--max_num', type=int, default=-1)
 parser.add_argument('--test_crops', type=int, default=1)
 parser.add_argument('--input_size', type=int, default=224)
+parser.add_argument('--clip_length', default=64, type=int, metavar='N',
+                    help='length of sequential frames (default: 64)')
 parser.add_argument('--crop_fusion_type', type=str, default='avg',
                     choices=['avg', 'max', 'topk'])
 parser.add_argument('--k', type=int, default=3)
@@ -90,13 +92,11 @@ output = []
 def eval_video(video_data):
     i, data, label = video_data
 
-    input_var = torch.autograd.Variable(data.view(-1, 64, data.size(2), data.size(3)),
-                                        volatile=True)
+    # input_var = torch.autograd.Variable(data.view(-1, 64, data.size(2), data.size(3)),
+    #                                     volatile=True)
 
-    rst = model(input_var).data.cpu().numpy().copy()
-    return i, rst.reshape(num_classes).mean(axis=0).reshape(
-        (args.test_segments, 1, num_classes)
-    ), label[0]
+    rst = model(data).data.cpu().numpy().copy()
+    return i, rst, label[0]
 
 
 proc_start_time = time.time()
@@ -108,11 +108,12 @@ for i, (data, label) in data_gen:
     rst = eval_video((i, data, label))
     output.append(rst[1:])
     cnt_time = time.time() - proc_start_time
-    print('video {} done, total {}/{}, average {} sec/video'.format(i, i + 1,
-                                                                    total_num,
-                                                                    float(cnt_time) / (i + 1)))
+    if i % 10 == 0:
+        print('video {} done, total {}/{}, average {} sec/video'.format(i, i + 1,
+                                                                        total_num,
+                                                                        float(cnt_time) / (i + 1)))
 
-video_pred = [np.argmax(np.mean(x[0], axis=0)) for x in output]
+video_pred = [np.argmax(x[0]) for x in output]
 
 video_labels = [x[1] for x in output]
 

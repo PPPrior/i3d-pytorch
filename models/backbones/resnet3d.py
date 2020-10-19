@@ -307,11 +307,11 @@ class ResNet3d(nn.Module):
             print(f'These parameters in the 2d checkpoint are not loaded: {remaining_names}')
 
 
-def resnet3d(arch, pretrained2d=False, progress=True, **kwargs):
+def resnet3d(arch, progress=True, modality='RGB', **kwargs):
     r"""
     Args:
         arch (str): The architecture of resnet
-        pretrained2d (bool): If True, utilize the pretrained parameters in 2d models
+        modality (str): If 'RGB', utilize the pretrained parameters in 2d models
         progress (bool): If True, displays a progress bar of the download to stderr
     """
 
@@ -323,8 +323,8 @@ def resnet3d(arch, pretrained2d=False, progress=True, **kwargs):
         'resnet152': (Bottleneck3d, (3, 8, 36, 3))
     }
 
-    model = ResNet3d(*arch_settings[arch], **kwargs)
-    if pretrained2d:
+    model = ResNet3d(*arch_settings[arch], modality=modality, **kwargs)
+    if modality == 'RGB':
         state_dict = load_state_dict_from_url(model_urls[arch], progress=progress)
         model.inflate_weights(state_dict)
     return model

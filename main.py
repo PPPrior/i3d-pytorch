@@ -75,8 +75,8 @@ def main():
     else:
         raise ValueError('Unknown dataset ' + args.dataset)
 
-    model = getattr(i3d, args.arch)(pretrained2d=True, modality=args.modality,
-                                    num_classes=num_classes, dropout_ratio=args.dropout)
+    model = getattr(i3d, args.arch)(modality=args.modality, num_classes=num_classes,
+                                    dropout_ratio=args.dropout)
 
     crop_size = args.input_size
     scale_size = args.input_size * 256 // 224
