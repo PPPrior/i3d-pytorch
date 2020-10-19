@@ -118,12 +118,13 @@ class ResNet3d(nn.Module):
 
     def __init__(self, block, layers, zero_init_residual=False,
                  groups=1, width_per_group=64, replace_stride_with_dilation=None,
-                 norm_layer=None):
+                 norm_layer=None, modality='RGB'):
         super(ResNet3d, self).__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm3d
         self._norm_layer = norm_layer
 
+        self.modality = modality
         self.inplanes = 64
         self.dilation = 1
         if replace_stride_with_dilation is None:
@@ -189,7 +190,13 @@ class ResNet3d(nn.Module):
     def _make_stem_layer(self):
         """Construct the stem layers consists of a conv+norm+act module and a
         pooling layer."""
-        self.conv1 = nn.Conv3d(3, self.inplanes, kernel_size=(5, 7, 7),
+        if self.modality == 'RGB':
+            inchannels = 3
+        elif self.modality == 'Flow':
+            inchannels = 2
+        else:
+            raise ValueError('Unknown modality: {}'.format(self.modality))
+        self.conv1 = nn.Conv3d(inchannels, self.inplanes, kernel_size=(5, 7, 7),
                                stride=2, padding=(2, 3, 3), bias=False)
         self.bn1 = self._norm_layer(self.inplanes)
         self.relu = nn.ReLU(inplace=True)

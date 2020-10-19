@@ -75,13 +75,17 @@ def main():
     else:
         raise ValueError('Unknown dataset ' + args.dataset)
 
-    model = getattr(i3d, args.arch)(pretrained2d=True, num_classes=num_classes,
-                                    dropout_ratio=args.dropout)
+    model = getattr(i3d, args.arch)(pretrained2d=True, modality=args.modality,
+                                    num_classes=num_classes, dropout_ratio=args.dropout)
 
     crop_size = args.input_size
     scale_size = args.input_size * 256 // 224
     input_mean = [0.485, 0.456, 0.406]
     input_std = [0.229, 0.224, 0.225]
+    if args.modality == 'Flow':
+        input_mean = [0.5]
+        input_std = [np.mean(input_std)]
+
     train_augmentation = get_augmentation(args.modality, args.input_size)
 
     model = torch.nn.DataParallel(model, device_ids=args.gpus).cuda()
@@ -292,7 +296,7 @@ class AverageMeter(object):
 
 
 def adjust_learning_rate(optimizer, epoch, lr_steps):
-    """Sets the learning rate to the initial LR decayed by 10 every 20 epochs"""
+    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
     decay = 0.1 ** (sum(epoch >= np.array(lr_steps)))
     lr = args.lr * decay
     decay = args.weight_decay
