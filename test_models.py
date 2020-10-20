@@ -1,11 +1,6 @@
-import os
 import argparse
 import time
 
-import numpy as np
-import torch
-import torch.nn.parallel
-import torch.optim
 from sklearn.metrics import confusion_matrix
 
 from dataset import I3DDataSet
@@ -23,7 +18,7 @@ parser.add_argument('--arch', type=str, default='i3d_resnet50')
 parser.add_argument('--save_scores', type=str, default=None)
 parser.add_argument('--max_num', type=int, default=-1)
 parser.add_argument('--input_size', type=int, default=224)
-parser.add_argument('--clip_length', default=64, type=int, metavar='N',
+parser.add_argument('--clip_length', default=250, type=int, metavar='N',
                     help='length of sequential frames (default: 64)')
 parser.add_argument('--dropout', type=float, default=0.7)
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
@@ -56,6 +51,9 @@ crop_size = args.input_size
 scale_size = args.input_size * 256 // 224
 input_mean = [0.485, 0.456, 0.406]
 input_std = [0.229, 0.224, 0.225]
+if args.modality == 'Flow':
+    input_mean = [0.5]
+    input_std = [np.mean(input_std)]
 
 data_loader = torch.utils.data.DataLoader(
     I3DDataSet(args.root_path, args.test_list, clip_length=args.clip_length, modality=args.modality,

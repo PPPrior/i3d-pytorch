@@ -193,7 +193,7 @@ class ResNet3d(nn.Module):
         if self.modality == 'RGB':
             inchannels = 3
         elif self.modality == 'Flow':
-            inchannels = 2
+            inchannels = 1
         else:
             raise ValueError('Unknown modality: {}'.format(self.modality))
         self.conv1 = nn.Conv3d(inchannels, self.inplanes, kernel_size=(5, 7, 7),
