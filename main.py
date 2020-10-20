@@ -8,7 +8,6 @@ import torch.backends.cudnn as cudnn
 import torch.optim
 from torch.nn.utils import clip_grad_norm
 
-from models.backbones import resnet3d
 from models import i3d
 from dataset import I3DDataSet
 from transforms import *
