@@ -1,5 +1,6 @@
 import argparse
 import time
+import os
 
 from sklearn.metrics import confusion_matrix
 
@@ -27,6 +28,8 @@ parser.add_argument('--gpus', nargs='+', type=int, default=None)
 parser.add_argument('--flow_prefix', type=str, default='flow_')
 
 args = parser.parse_args()
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "4, 5, 6, 7"
 
 if args.dataset == 'ucf101':
     num_classes = 101
