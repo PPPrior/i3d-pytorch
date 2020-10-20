@@ -87,9 +87,6 @@ output = []
 def eval_video(video_data):
     i, data, label = video_data
 
-    # input_var = torch.autograd.Variable(data.view(-1, 64, data.size(2), data.size(3)),
-    #                                     volatile=True)
-
     rst = model(data).data.cpu().numpy().copy()
     return i, rst, label[0]
 

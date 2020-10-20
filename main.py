@@ -14,55 +14,12 @@ from dataset import I3DDataSet
 from transforms import *
 from opts import parser
 
-
-def test_resnet3d():
-    model = resnet3d('resnet50', pretrained2d=True)
-    # batch_size x channels x frames x height x width
-    dummy_input = torch.rand(8, 3, 10, 224, 224)
-    output = model(dummy_input)
-    print(output.shape)
-
-
-def test_i3d():
-    model = getattr(i3d, 'i3d_resnet50')(pretrained2d=True, num_classes=101)
-    # batch_size x channels x frames x height x width
-    dummy_input = torch.rand(8, 3, 10, 224, 224)
-    output = model(dummy_input)
-    print(output.shape)
-
-
-def data_vis():
-    args = parser.parse_args()
-    train_loader = torch.utils.data.DataLoader(
-        I3DDataSet(args.root_path, args.train_list, clip_length=args.clip_length, modality=args.modality,
-                   image_tmpl="img_{:05d}.jpg" if args.modality == "RGB" else args.flow_prefix + "{}_{:05d}.jpg",
-                   transform=torchvision.transforms.Compose([
-                       # torchvision.transforms.Compose([GroupMultiScaleCrop(224, [1, .875, .75, .66]),
-                       #                                 GroupRandomHorizontalFlip(is_flow=False)]),
-                       ToNumpyNDArray(),
-                       ToTorchFormatTensor(),
-                       # GroupNormalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-                   ])),
-        batch_size=args.batch_size, shuffle=True,
-        num_workers=args.workers, pin_memory=True)
-
-    train_loader = iter(train_loader)
-    for x in range(args.batch_size):
-        img = torchvision.utils.make_grid(next(train_loader)[0][x].permute(1, 0, 2, 3))
-        import matplotlib.pyplot as plt
-        plt.figure(figsize=(18, 18))
-        plt.imshow(np.transpose(img.numpy(), (1, 2, 0)))
-        plt.show()
-
-
-def test():
-    test_i3d()
-
-
 best_prec1 = 0
 
 
 def main():
+    os.environ["CUDA_VISIBLE_DEVICES"] = "4, 5, 6, 7"
+
     global args, best_prec1
     args = parser.parse_args()
 
