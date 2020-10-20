@@ -1,6 +1,7 @@
 import torch.utils.data as data
 
 from PIL import Image
+import numpy as np
 import os
 import os.path
 from numpy.random import randint
@@ -55,33 +56,30 @@ class I3DDataSet(data.Dataset):
         self.video_list = [VideoRecord(x.strip().split(' ')) for x in
                            open(os.path.join(self.root_path, self.list_file))]
 
-    def _sample_index(self, record):
-        tick = record.num_frames - self.clip_length
-        if tick < 0:
-            index = 0
-        else:
-            if not self.test_mode:
-                index = randint(tick + 1) if self.random_shift else int(tick / 2.0)
+    def _sample_indices(self, record):
+        if not self.test_mode and self.random_shift:
+            average_duration = record.num_frames // self.clip_length
+            if average_duration > 0:
+                offsets = np.sort(
+                    np.multiply(list(range(self.clip_length)), average_duration) + randint(average_duration,
+                                                                                           size=self.clip_length))
             else:
-                index = int(tick / 2.0)
-        return index + 1
+                offsets = np.sort(randint(record.num_frames, size=self.clip_length))
+        else:
+            tick = record.num_frames / float(self.clip_length)
+            offsets = np.array([int(tick / 2.0 + tick * x) for x in range(self.clip_length)])
+        return offsets + 1
 
     def __getitem__(self, index):
         record = self.video_list[index]
-        idx = self._sample_index(record)
-        return self.get(record, idx)
+        indices = self._sample_indices(record)
+        return self.get(record, indices)
 
-    def get(self, record, index):
+    def get(self, record, indices):
         images = list()
-        p, seg_imgs = int(index), None
-        for i in range(self.clip_length):
-            if p < record.num_frames:
-                seg_imgs = self._load_image(record.path, p)
-                images.extend(seg_imgs)
-                p += 1
-            else:
-                images.extend(seg_imgs)
-
+        for index in indices:
+            img = self._load_image(record.path, int(index))
+            images.extend(img)
         process_data = self.transform(images)
         return process_data, record.label
 

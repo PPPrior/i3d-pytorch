@@ -29,8 +29,6 @@ parser.add_argument('--flow_prefix', type=str, default='flow_')
 
 args = parser.parse_args()
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "4, 5, 6, 7"
-
 if args.dataset == 'ucf101':
     num_classes = 101
 elif args.dataset == 'hmdb51':
@@ -68,7 +66,7 @@ data_loader = torch.utils.data.DataLoader(
                    ToTorchFormatTensor(),
                    GroupNormalize(input_mean, input_std),
                ])),
-    batch_size=1, shuffle=False,
+    batch_size=1, shuffle=False, test_mode=True,
     num_workers=args.workers * 2, pin_memory=True)
 
 if args.gpus is not None:
