@@ -18,8 +18,6 @@ best_prec1 = 0
 
 
 def main():
-    os.environ["CUDA_VISIBLE_DEVICES"] = "4, 5, 6, 7"
-
     global args, best_prec1
     args = parser.parse_args()
 
