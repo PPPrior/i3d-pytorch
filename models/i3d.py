@@ -69,68 +69,83 @@ class I3DHead(nn.Module):
         return cls_score
 
 
-def _load_model(backbone_name, progress, modality, num_classes, **kwargs):
-    backbone = resnet3d(arch=backbone_name, progress=progress, modality=modality)
+def _load_model(backbone_name, progress, modality, pretrained2d, num_classes, **kwargs):
+    backbone = resnet3d(arch=backbone_name, progress=progress, modality=modality, pretrained2d=pretrained2d)
     classifier = I3DHead(num_classes=num_classes, in_channels=2048, **kwargs)
     model = I3D(backbone, classifier)
     return model
 
 
-def i3d_resnet18(modality='RGB', progress=True, num_classes=21, **kwargs):
+def i3d_resnet18(modality='RGB', pretrained2d=True, progress=True, num_classes=21, **kwargs):
     """Constructs a I3D model with a ResNet3d-18 backbone.
 
     Args:
-        modality (str): The modality of input data (RGB or Flow), if 'RGB', the backbone
-            utilize the pretrained parameters in 2d models
-        progress (bool): If True, displays a progress bar of the download to stderr
-        num_classes (int): Number of dataset classes
+        modality (str): The modality of input data (RGB or Flow). If 'RGB', the first Conv
+            accept a 3-channels input. (Default: RGB)
+        pretrained2d (bool): If True, the backbone utilize the pretrained parameters in 2d
+            models. (Default: True)
+        progress (bool): If True, displays a progress bar of the download to stderr.
+            (Default: True)
+        num_classes (int): Number of dataset classes. (Default: 21)
     """
-    return _load_model('resnet18', progress, modality, num_classes, **kwargs)
+    return _load_model('resnet18', progress, modality, pretrained2d, num_classes, **kwargs)
 
 
-def i3d_resnet34(modality='RGB', progress=True, num_classes=21, **kwargs):
+def i3d_resnet34(modality='RGB', pretrained2d=True, progress=True, num_classes=21, **kwargs):
     """Constructs a I3D model with a ResNet3d-34 backbone.
 
     Args:
-        modality (str): The modality of input data (RGB or Flow), if 'RGB', the backbone
-            utilize the pretrained parameters in 2d models
-        progress (bool): If True, displays a progress bar of the download to stderr
-        num_classes (int): Number of dataset classes
+        modality (str): The modality of input data (RGB or Flow). If 'RGB', the first Conv
+            accept a 3-channels input. (Default: RGB)
+        pretrained2d (bool): If True, the backbone utilize the pretrained parameters in 2d
+            models. (Default: True)
+        progress (bool): If True, displays a progress bar of the download to stderr.
+            (Default: True)
+        num_classes (int): Number of dataset classes. (Default: 21)
     """
-    return _load_model('resnet34', progress, modality, num_classes, **kwargs)
+    return _load_model('resnet34', progress, modality, pretrained2d, num_classes, **kwargs)
 
 
-def i3d_resnet50(modality='RGB', progress=True, num_classes=21, **kwargs):
+def i3d_resnet50(modality='RGB', pretrained2d=True, progress=True, num_classes=21, **kwargs):
     """Constructs a I3D model with a ResNet3d-50 backbone.
 
     Args:
-        modality (str): The modality of input data (RGB or Flow), if 'RGB', the backbone
-            utilize the pretrained parameters in 2d models
-        progress (bool): If True, displays a progress bar of the download to stderr
-        num_classes (int): Number of dataset classes
+        modality (str): The modality of input data (RGB or Flow). If 'RGB', the first Conv
+            accept a 3-channels input. (Default: RGB)
+        pretrained2d (bool): If True, the backbone utilize the pretrained parameters in 2d
+            models. (Default: True)
+        progress (bool): If True, displays a progress bar of the download to stderr.
+            (Default: True)
+        num_classes (int): Number of dataset classes. (Default: 21)
     """
-    return _load_model('resnet50', progress, modality, num_classes, **kwargs)
+    return _load_model('resnet50', progress, modality, pretrained2d, num_classes, **kwargs)
 
 
-def i3d_resnet101(modality='RGB', progress=True, num_classes=21, **kwargs):
+def i3d_resnet101(modality='RGB', pretrained2d=True, progress=True, num_classes=21, **kwargs):
     """Constructs a I3D model with a ResNet3d-101 backbone.
 
     Args:
-        modality (str): The modality of input data (RGB or Flow), if 'RGB', the backbone
-            utilize the pretrained parameters in 2d models
-        progress (bool): If True, displays a progress bar of the download to stderr
-        num_classes (int): Number of dataset classes
+        modality (str): The modality of input data (RGB or Flow). If 'RGB', the first Conv
+            accept a 3-channels input. (Default: RGB)
+        pretrained2d (bool): If True, the backbone utilize the pretrained parameters in 2d
+            models. (Default: True)
+        progress (bool): If True, displays a progress bar of the download to stderr.
+            (Default: True)
+        num_classes (int): Number of dataset classes. (Default: 21)
     """
-    return _load_model('resnet101', progress, modality, num_classes, **kwargs)
+    return _load_model('resnet101', progress, modality, pretrained2d, num_classes, **kwargs)
 
 
-def i3d_resnet152(modality='RGB', progress=True, num_classes=21, **kwargs):
+def i3d_resnet152(modality='RGB', pretrained2d=True, progress=True, num_classes=21, **kwargs):
     """Constructs a I3D model with a ResNet3d-152 backbone.
 
     Args:
-        modality (str): The modality of input data (RGB or Flow), if 'RGB', the backbone
-            utilize the pretrained parameters in 2d models
-        progress (bool): If True, displays a progress bar of the download to stderr
-        num_classes (int): Number of dataset classes
+        modality (str): The modality of input data (RGB or Flow). If 'RGB', the first Conv
+            accept a 3-channels input. (Default: RGB)
+        pretrained2d (bool): If True, the backbone utilize the pretrained parameters in 2d
+            models. (Default: True)
+        progress (bool): If True, displays a progress bar of the download to stderr.
+            (Default: True)
+        num_classes (int): Number of dataset classes. (Default: 21)
     """
-    return _load_model('resnet152', progress, modality, num_classes, **kwargs)
+    return _load_model('resnet152', progress, modality, pretrained2d, num_classes, **kwargs)
