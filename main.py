@@ -255,8 +255,8 @@ def adjust_learning_rate(optimizer, epoch, lr_steps):
     lr = args.lr * decay
     decay = args.weight_decay
     for param_group in optimizer.param_groups:
-        param_group['lr'] = lr  # * param_group['lr_mult']
-        param_group['weight_decay'] = decay  # * param_group['decay_mult']
+        param_group['lr'] = lr
+        param_group['weight_decay'] = decay
 
 
 def accuracy(output, target, topk=(1,)):
@@ -277,4 +277,3 @@ def accuracy(output, target, topk=(1,)):
 
 if __name__ == '__main__':
     main()
-    # test()
