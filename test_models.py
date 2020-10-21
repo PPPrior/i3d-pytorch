@@ -65,8 +65,9 @@ data_loader = torch.utils.data.DataLoader(
                    ToNumpyNDArray(),
                    ToTorchFormatTensor(),
                    GroupNormalize(input_mean, input_std),
-               ])),
-    batch_size=1, shuffle=False, test_mode=True,
+               ]),
+               test_mode=True),
+    batch_size=1, shuffle=False,
     num_workers=args.workers * 2, pin_memory=True)
 
 if args.gpus is not None:
