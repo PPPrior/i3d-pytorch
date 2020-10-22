@@ -271,7 +271,8 @@ class ToNumpyNDArray(object):
 
     def __call__(self, img_group):
         if img_group[0].mode == 'L':
-            return np.expand_dims([np.array(x) for x in img_group], axis=3)
+            return np.array([np.stack((np.array(img_group[x]), np.array(img_group[x + 1])), axis=-1)
+                             for x in range(0, len(img_group), 2)])
         if img_group[0].mode == 'RGB':
             return np.array([np.array(x) for x in img_group])
 
